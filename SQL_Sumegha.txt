@@ -1,0 +1,299 @@
+ASSIGNMENT 1: CREATE TABLE with sid, sname, dob, doj and add three records.
+
+CREATE table Student (sid char(5), sname varchar(20), dob date, doj date);
+INSERT INTO Student VALUES ('1','Sumegha', '16-August-1996', '13-August-2018');
+INSERT INTO Student VALUES ('2','Dhruv', '23-September-1997', '1-August-2018');
+INSERT INTO Student VALUES ('3','Daksh', '3-February-1997', '5-August-2015');
+INSERT INTO Student VALUES ('3','Daksh', '3-February-1997',to_date('16/08/2011','dd/mm/yyyy'));
+
+SELECT * from student;
+
+SID   SNAME                DOB       DOJ
+----- -------------------- --------- ---------
+1     Sumegha              16-AUG-96 13-AUG-18
+2     Dhruv                23-SEP-97 01-AUG-18
+3     Daksh                03-FEB-97 05-AUG-15
+3     Daksh                03-FEB-97 16-AUG-11
+
+Write a query to print age from DOB.
+SELECT floor(months_between(sysdate,dob)/12) from student;
+
+FLOOR(MONTHS_BETWEEN(SYSDATE,DOB)/12)
+-------------------------------------
+                                   21
+                                   20
+                                   21
+                                   21
+
+SELECT nvl(to_char(marks), 'ab') from student_t;
+
+NVL(TO_CHAR(MARKS),'AB')
+----------------------------------------
+ab
+ab
+98
+
+SELECT address, sum(marks) from student_t group by address having address='Chennai';
+
+ADDRESS              SUM(MARKS)
+-------------------- ----------
+Chennai                      98
+
+
+
+ASSIGNMENT 2: Create a table called Employee with the following Columns  and perform the following operations:-
+------------------------------------------------------------------------------------------------------------
+
+EmployeeID    
+EmployeeName   
+EmployeeAddress : 
+DOB
+DOJ
+Salary
+
+a.) INSERT five records
+
+b) Retrieve all the records
+
+c) Retrieve the Employee name whose salary is greater than 20000
+
+d) Retrieve the Employee name whose address contains 'a' or 'p' or 'r'  as the last character
+ 
+e) Increase the Salary of all the Employee by 20%
+
+f) Delete all the employee records whose salary is less than 5000
+
+create table employee
+  2  (
+  3  employeeid char, employeename varchar(20), employeeadress varchar(20), dob date, doj date, salary number(9,2)
+  4  );
+
+INSERT INTO employee values('1', 'Sume','Mumbai', '16-AUG-1996', '13-AUG-2018', 1000);
+INSERT INTO employee values('1', 'Sumo','Bangalore', '26-MAY-1998', '14-AUG-2018', 5000);
+UPDATE employee SET employeeid='3' where employeename='Sumo';
+INSERT INTO employee values('2', 'Manas','Bangalore', '16-MAY-1998', '14-JUN-2018', 2000);
+INSERT INTO employee values('4', 'Manasi','Gurgaon', '29-MAY-2000', '14-JUN-2014', 2050);
+INSERT INTO employee values('5', 'Monty','Gurgaon', '29-DEC-2000', '4-NOV-2014', 4050);
+
+SELECT * from employee;
+E EMPLOYEENAME         EMPLOYEEADRESS       DOB       DOJ           SALARY
+- -------------------- -------------------- --------- --------- ----------
+1 Sume                 Mumbai               16-AUG-96 13-AUG-18       1000
+3 Sumo                 Bangalore            26-MAY-98 14-AUG-18       5000
+2 Manas                Bangalore            16-MAY-98 14-JUN-18       2000
+4 Manasi               Gurgaon              29-MAY-00 14-JUN-14       2050
+5 Monty                Gurgaon              29-DEC-00 04-NOV-14       4050
+
+SELECT employeename from employee where salary>20000;
+
+no rows SELECTED
+
+SELECT employeename from employee where employeeadress like '%a' or employeeadress like '%p' or employeeadress like '%r';
+
+no rows SELECTED
+
+update employee set salary=salary*1.2;
+
+E EMPLOYEENAME         EMPLOYEEADRESS       DOB       DOJ           SALARY
+- -------------------- -------------------- --------- --------- ----------
+1 Sume                 Mumbai               16-AUG-96 13-AUG-18       1200
+3 Sumo                 Bangalore            26-MAY-98 14-AUG-18       6000
+2 Manas                Bangalore            16-MAY-98 14-JUN-18       2400
+4 Manasi               Gurgaon              29-MAY-00 14-JUN-14       2460
+5 Monty                Gurgaon              29-DEC-00 04-NOV-14       4860
+
+delete from employee where salary<5000;
+
+E EMPLOYEENAME         EMPLOYEEADRESS       DOB       DOJ           SALARY
+- -------------------- -------------------- --------- --------- ----------
+3 Sumo                 Bangalore            26-MAY-98 14-AUG-18       6000
+
+--ALTER TABLE by inserting FOREIGN KEY:(only column datatypes need to be same)
+
+create table emp1
+  2  (
+  3  emp_no number primary key,
+  4  empname varchar2(20) not null,
+  5  salary number,
+  6  desig varchar2(20),
+  7  dept_no number);
+
+create table dept1
+  2  (
+  3  deptno number primary key,
+  4  dept_name varchar2(20),
+  5  locat varchar2(20) not null);
+
+alter table emp1 add constraint myfk foreign key(dept_no) references dept1(deptno);
+
+--CAN ADD MULTIPLE CONSTRAINTS AT END:
+create table supplier(
+  2  sup_id number not null,
+  3  sup_name varchar(20) not null,
+  4  contact varchar(20),
+  5  constraint sup_pk primary key(sup_id), constraint contacterror check(contact in ('abc','bfg')));
+
+--ADDING A FOREIGN KEY WHILE CREATING THE TABLE:
+create table product(
+  2  prod_id number not null,
+  3  supplier_id number not null,
+  4  constraint fk_supplier
+  5  foreign key(supplier_id)
+  6  references supplier(sup_id));
+
+--ADDING CONSTRAINT
+alter table student add constraint emailConstraint check (email in ('a','b','c'));
+
+--DROPPING CONSTRAINT
+alter table student
+drop constraint emailConstraint;
+
+-ADDING A COLUMN
+alter table student add email varchar2(20);
+
+--DROPPING A COLUMN
+alter table student drop column email;
+
+--CASCADE DELETE
+create table section(
+  2  secid number primary key,
+  3  secname varchar(20) not null,
+  4  bookcount number);
+
+create table book(
+  2  ISBN number,
+  3  sectionid number,
+  4  constraint book_pk primary key(isbn),
+  5  constraint booksec foreign key (sectionid) references section(secid) on delete cascade);
+
+     SECID SECNAME               BOOKCOUNT
+---------- -------------------- ----------
+         1 abc                          23
+         2 dbf                          58
+
+select * from book;
+
+      ISBN  SECTIONID
+---------- ----------
+       253          1
+        33          1
+       363          2
+
+delete from section where secid=1;
+
+1 row deleted.
+
+select * from book;
+
+      ISBN  SECTIONID
+---------- ----------
+       363          2
+
+--Corresponding books with section ID 1 have also been deleted.
+
+
+--List of employees belonging to dept 10 who have salaries equal to that of Tom, Bob & Hay - SUB QUERY MULTIPLE ROW
+
+SELECT empname FROM employee WHERE dept = 10 AND salary IN (SELECT salary FROM employee WHERE empname IN ('Tom','Bob','Hay');
+
+--SUB QUERY SINGLE ROW
+
+create table stud(roll number, name varchar(20));
+
+insert into stud values(&roll, '&name');
+Enter value for roll: 1
+Enter value for name: sume
+old   1: insert into stud values(&roll, '&name')
+new   1: insert into stud values(1, 'sume')
+
+      ROLL NAME
+---------- --------------------
+         1 sume
+
+create table fees(roll number, amnt number);
+
+insert into fees values(&roll, &amnt);
+Enter value for roll: 1
+Enter value for amnt: 534
+old   1: insert into fees values(&roll, &amnt)
+new   1: insert into fees values(1, 534)
+
+      ROLL       AMNT
+---------- ----------
+         1        534
+
+select name from stud where roll = (select roll from fees where amnt>500);
+
+NAME
+--------------------
+sume
+
+--List out empno, name, sal and dept of employees in dept 10 and who's salary grade and month of joining us 
+  equal to one of both salary grade and month of joining if employees tom, bob, hay.
+
+select empno, name, sal, deptno, grade
+
+--Increase the salary of employees earning less than average of the all salaries to the average 
+
+update fees set amnt =(select avg(amnt) from fees) where amnt<(select avg(amnt) from fees);
+
+--Delete highest paid employee from each dept - CORRELATED QUERY
+
+delete from emp a where a.sal = (select max(sal) from emp b where a.deptno = b.deptno);
+
+
+--INNER JOINT
+
+SUPPLIER_ID          SUPPLIER_NAME
+-------------------- --------------------
+10000                IBM
+10001                Hewlett Packard
+10002                Microsoft
+10002                Microsoft
+
+ORDER_ID             SUPPLIER_ID          ORDER_DAT
+-------------------- -------------------- ---------
+1                    10000                03-MAR-09
+2                    10000                05-JUL-10
+3                    10001                08-DEC-10
+
+select s.supplier_id, supplier_name, order_id from orders o, suppliers s where s.supplier_id=o.supplier_id;
+
+SUPPLIER_ID          SUPPLIER_NAME        ORDER_ID
+-------------------- -------------------- --------------------
+10000                IBM                  2
+10000                IBM                  1
+10001                Hewlett Packard      3
+
+--RIGHT OUTER JOIN
+SELECT s.supplier_id, supplier_name, order_id from orders o right outer join suppliers s on s.supplier_id=o.supplier_id;
+SUPPLIER_ID          SUPPLIER_NAME        ORDER_ID
+-------------------- -------------------- --------------------
+10000                IBM                  1
+10000                IBM                  2
+10001                Hewlett Packard      3
+10002                Microsoft
+10002                Microsoft
+
+--LEFT OUTER JOIN
+SELECT s.supplier_id, supplier_name, order_id from orders o left outer join suppliers s on s.supplier_id=o.supplier_id;
+
+SUPPLIER_ID          SUPPLIER_NAME        ORDER_ID
+-------------------- -------------------- --------------------
+10000                IBM                  2
+10000                IBM                  1
+10001                Hewlett Packard      3
+                                          4
+
+--FULL OUTER JOIN
+ SELECT s.supplier_id, supplier_name, order_id from orders o full outer join suppliers s on s.supplier_id=o.supplier_id;
+
+SUPPLIER_ID          SUPPLIER_NAME        ORDER_ID
+-------------------- -------------------- --------------------
+10000                IBM                  2
+10000                IBM                  1
+10001                Hewlett Packard      3
+10002                Microsoft
+10002                Microsoft
+                                          4
+
